@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumen Visual: Sistemas de Costeo en Comerciantes de Abarrotes de Cusco</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #EEF5FF;
+            color: #1A365D;
+        }
+        .page-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .section {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .chart-container {
+            position: relative;
+            margin: 20px auto;
+            height: 300px;
+        }
+        .flow-box {
+            background-color: #3E92CC;
+            color: white;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 5px;
+            text-align: center;
+        }
+        .flow-arrow {
+            color: #2A628F;
+            font-size: 24px;
+            margin: 10px;
+        }
+        .small-chart {
+            height: 220px;
+        }
+        .radar-container {
+            height: 400px;
+        }
+        .heatmap-container {
+            height: 400px;
+        }
+        .indicator {
+            background-color: #EEF5FF;
+            border-left: 5px solid #2A628F;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .indicator-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1A365D;
+        }
+        .recommendation-card {
+            border-left: 4px solid #3E92CC;
+            padding: 12px;
+            margin: 10px 0;
+            background-color: rgba(62, 146, 204, 0.1);
+            border-radius: 0 4px 4px 0;
+        }
+        .custom-legend {
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 0 10px;
+        }
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            margin-right: 5px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-bold mb-4 text-center" style="color: #1A365D;">Sistemas de Costeo en Comerciantes de Abarrotes de Cusco</h1>
+            <p class="text-xl mb-2">Resumen Visual de Hallazgos Principales</p>
+            <div class="flex justify-center">
+                <div class="w-20 h-1 bg-gradient-to-r from-blue-300 to-blue-700 rounded"></div>
+            </div>
+        </header>
+
+        <!-- Infografía Principal -->
+        <section class="section">
+            <h2 class="text-2xl font-bold mb-6" style="color: #2A628F;">Distribución de Sistemas de Costeo</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <div class="chart-container">
+                        <canvas id="sistemasCosteoPie"></canvas>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-3" style="color: #2A628F;">Hallazgos Clave</h3>
+                    <div class="indicator">
+                        <p class="font-semibold">Sistemas basados en registros históricos</p>
+                        <p class="indicator-value">45%</p>
+                        <p class="text-sm">Mayor adopción en comerciantes con educación técnica y profesional</p>
+                    </div>
+                    <div class="indicator">
+                        <p class="font-semibold">Métodos mixtos de costeo</p>
+                        <p class="indicator-value">30%</p>
+                        <p class="text-sm">Preferidos en negocios de tamaño mediano con más de 5 años</p>
+                    </div>
+                    <div class="indicator">
+                        <p class="font-semibold">Sin registros formales</p>
+                        <p class="indicator-value">25%</p>
+                        <p class="text-sm">Predominante en micronegocios y comerciantes con educación básica</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Perfil Demográfico -->
+        <section class="section">
+            <h2 class="text-2xl font-bold mb-6" style="color: #2A628F;">Perfil Demográfico de los Comerciantes</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 text-center" style="color: #3E92CC;">Nivel Educativo</h3>
+                    <div class="chart-container small-chart">
+                        <canvas id="educacionPie"></canvas>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 text-center" style="color: #3E92CC;">Distribución por Edad</h3>
+                    <div class="chart-container small-chart">
+                        <canvas id="edadBar"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8">
+                <h3 class="text-xl font-semibold mb-3 text-center" style="color: #3E92CC;">Correlación: Nivel Educativo y Sistema de Costeo</h3>
+                <div class="heatmap-container">
+                    <canvas id="correlacionHeatmap"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Diagrama de Flujo de Decisiones -->
+        <section class="section">
+            <h2 class="text-2xl font-bold mb-6" style="color: #2A628F;">Diagrama de Flujo de Decisiones por Sistema</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                <!-- Sistema 1: Registros Históricos -->
+                <div>
+                    <h3 class="text-center font-semibold mb-4" style="color: #3E92CC;">Registros Históricos</h3>
+                    <div class="flow-box" style="background-color: #1A365D;">Recopilación de datos históricos</div>
+                    <div class="flow-arrow">↓</div>
+                    <div class="flow-box" style="background-color: #2A628F;">Registro sistemático de costos</div>
+                    <div class="flow-arrow">↓</div>
+                    <div class="flow-box" style="background-color: #3E92CC;">Análisis de tendencias</div>
+                    <div class="flow-arrow">↓</div>
+                    <div class="flow-box" style="background-color: #7BC8F6;">Proyecciones y decisiones basadas en datos</div>
+                    
+                    <div class="mt-4 text-sm">
+                        <p><strong>Fortalezas:</strong> Precisión, datos objetivos</p>
+                        <p><strong>Debilidades:</strong> Mayor tiempo, complejidad</p>
+                    </div>
+                </div>
+                
+                <!-- Sistema 2: Métodos Mixtos -->
+                <div>
+                    <h3 class="text-center font-semibold mb-4" style="color: #3E92CC;">Métodos Mixtos</h3>
+                    <div class="flow-box" style="background-color: #1A365D;">Registros básicos + experiencia</div>
+                    <div class="flow-arrow">↓</div>
+                    <div class="flow-box" style="background-color: #2A628F;">Análisis contextual</div>
+                    <div class="flow-arrow">↓</div>
+                    <div class="flow-box" style="background-color: #3E92CC;">Adaptación a temporadas</div>
+                    <div class="flow-arrow">↓</div>
+                    <div class="flow-box" style="background-color: #7BC8F6;">Decisiones equilibradas</div>
+                    
+                    <div class="mt-4 text-sm">
+                        <p><strong>Fortalezas:</strong> Flexibilidad, adaptabilidad</p>
+                        <p><strong>Debilidades:</strong> Consistencia variable</p>
+                    </div>
+                </div>
+                
+                <!-- Sistema 3: Sin Registros Formales -->
+                <div>
+                    <h3 class="text-center font-semibold mb-4" style="color: #3E92CC;">Sin Registros Formales</h3>
+                    <div class="flow-box" style="background-color: #1A365D;">Conocimiento tácito</div>
+                    <div class="flow-arrow">↓</div>
+                    <div class="flow-box" style="background-color: #2A628F;">Observación del mercado</div>
+                    <div class="flow-arrow">↓</div>
+                    <div class="flow-box" style="background-color: #3E92CC;">Ajustes intuitivos</div>
+                    <div class="flow-arrow">↓</div>
+                    <div class="flow-box" style="background-color: #7BC8F6;">Decisiones basadas en experiencia</div>
+                    
+                    <div class="mt-4 text-sm">
+                        <p><strong>Fortalezas:</strong> Rapidez, simplicidad</p>
+                        <p><strong>Debilidades:</strong> Falta de trazabilidad</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Comparación Multidimensional -->
+        <section class="section">
+            <h2 class="text-2xl font-bold mb-6" style="color: #2A628F;">Comparación Multidimensional de Sistemas</h2>
+            <div class="radar-container">
+                <canvas id="sistemaRadar"></canvas>
+            </div>
+        </section>
+
+        <!-- Dashboard de Indicadores -->
+        <section class="section">
+            <h2 class="text-2xl font-bold mb-6" style="color: #2A628F;">Indicadores Clave por Sistema de Costeo</h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div>
+                    <h3 class="text-center font-semibold mb-3" style="color: #3E92CC;">Rentabilidad Percibida</h3>
+                    <div class="chart-container small-chart">
+                        <canvas id="rentabilidadBar"></canvas>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-center font-semibold mb-3" style="color: #3E92CC;">Precisión en Estimaciones</h3>
+                    <div class="chart-container small-chart">
+                        <canvas id="precisionBar"></canvas>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-center font-semibold mb-3" style="color: #3E92CC;">Adaptabilidad a Cambios</h3>
+                    <div class="chart-container small-chart">
+                        <canvas id="adaptabilidadBar"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Características de Negocios -->
+        <section class="section">
+            <h2 class="text-2xl font-bold mb-6" style="color: #2A628F;">Características de los Negocios</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 text-center" style="color: #3E92CC;">Tamaño del Negocio y Sistema de Costeo</h3>
+                    <div class="chart-container">
+                        <canvas id="tamanioBar"></canvas>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 text-center" style="color: #3E92CC;">Antigüedad del Negocio</h3>
+                    <div class="chart-container">
+                        <canvas id="antiguedadBar"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Aplicaciones Prácticas -->
+        <section class="section">
+            <h2 class="text-2xl font-bold mb-6" style="color: #2A628F;">Aplicaciones Prácticas Destacadas</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <div class="chart-container">
+                        <canvas id="aplicacionesBar"></canvas>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-3" style="color: #3E92CC;">Beneficios Observados</h3>
+                    <div class="recommendation-card">
+                        <h4 class="font-bold">Proyecciones financieras</h4>
+                        <p>Los sistemas basados en registros históricos permiten proyecciones hasta 86% más precisas, especialmente para temporadas turísticas.</p>
+                    </div>
+                    <div class="recommendation-card">
+                        <h4 class="font-bold">Identificación de productos rentables</h4>
+                        <p>Los métodos mixtos destacan en la optimización del portafolio de productos, con incrementos de rentabilidad del 23%.</p>
+                    </div>
+                    <div class="recommendation-card">
+                        <h4 class="font-bold">Adaptación a temporadas</h4>
+                        <p>Los comerciantes con sistemas formales reportan 54% menos pérdidas por productos perecederos durante temporadas bajas.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recomendaciones Clave -->
+        <section class="section">
+            <h2 class="text-2xl font-bold mb-6" style="color: #2A628F;">Recomendaciones Clave</h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="bg-blue-50 p-4 rounded-lg border-t-4" style="border-color: #1A365D;">
+                    <h3 class="font-semibold mb-2" style="color: #1A365D;">Para comerciantes sin registros formales</h3>
+                    <ul class="list-disc pl-5 text-sm">
+                        <li>Implementar registros básicos simplificados</li>
+                        <li>Utilizar aplicaciones móviles sencillas para tracking</li>
+                        <li>Establecer rutinas semanales de revisión de costos</li>
+                        <li>Participar en capacitaciones básicas de costeo</li>
+                    </ul>
+                </div>
+                <div class="bg-blue-50 p-4 rounded-lg border-t-4" style="border-color: #2A628F;">
+                    <h3 class="font-semibold mb-2" style="color: #2A628F;">Para usuarios de métodos mixtos</h3>
+                    <ul class="list-disc pl-5 text-sm">
+                        <li>Formalizar componentes intuitivos del sistema</li>
+                        <li>Implementar análisis de margen por categoría</li>
+                        <li>Desarrollar indicadores de temporada</li>
+                        <li>Crear planes de contingencia basados en datos</li>
+                    </ul>
+                </div>
+                <div class="bg-blue-50 p-4 rounded-lg border-t-4" style="border-color: #3E92CC;">
+                    <h3 class="font-semibold mb-2" style="color: #3E92CC;">Para usuarios de registros históricos</h3>
+                    <ul class="list-disc pl-5 text-sm">
+                        <li>Integrar análisis predictivo simple</li>
+                        <li>Incorporar variables de mercado externas</li>
+                        <li>Automatizar procesos de registro repetitivos</li>
+                        <li>Desarrollar modelos para escenarios múltiples</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <footer class="text-center mt-10 mb-6 text-sm text-blue-800">
+            <p>Estudio basado en datos de 132 comerciantes de abarrotes en Cusco, Perú (2025)</p>
+            <p class="mt-2">Análisis de sistemas de costeo y sus aplicaciones prácticas</p>
+        </footer>
+    </div>
+
+    <script>
+        // Configuración de colores
+        const colores = {
+            azulProfundo: '#1A365D',
+            azulMedio: '#2A628F',
+            azul: '#3E92CC',
+            azulClaro: '#7BC8F6',
+            azulMuyClaro: '#D6E8FF'
+        };
+
+        const fondos = [
+            colores.azulProfundo,
+            colores.azulMedio,
+            colores.azul,
+            colores.azulClaro
+        ];
+
+        // Gráfico de Sistemas de Costeo (Pie)
+        const ctxSistemas = document.getElementById('sistemasCosteoPie').getContext('2d');
+        new Chart(ctxSistemas, {
+            type: 'pie',
+            data: {
+                labels: ['Registros Históricos', 'Métodos Mixtos', 'Sin Registros Formales'],
+                datasets: [{
+                    data: [45, 30, 25],
+                    backgroundColor: [colores.azulProfundo, colores.azulMedio, colores.azul],
+                    borderColor: 'white',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: colores.azulProfundo,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': ' + context.raw + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Gráfico de Nivel Educativo (Pie)
+        const ctxEducacion = document.getElementById('educacionPie').getContext('2d');
+        new Chart(ctxEducacion, {
+            type: 'pie',
+            data: {
+                labels: ['Educación Básica', 'Técnicos', 'Profesionales'],
+                datasets: [{
+                    data: [10, 60, 30],
+                    backgroundColor: [colores.azulClaro, colores.azulMedio, colores.azulProfundo],
+                    borderColor: 'white',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: colores.azulProfundo,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': ' + context.raw + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Gráfico de Distribución por Edad (Bar)
+        const ctxEdad = document.getElementById('edadBar').getContext('2d');
+        new Chart(ctxEdad, {
+            type: 'bar',
+            data: {
+                labels: ['17-30', '31-45', '46-60', '61-74'],
+                datasets: [{
+                    label: 'Comerciantes por rango de edad',
+                    data: [50, 35, 10, 5],
+                    backgroundColor: colores.azulMedio,
+                    borderColor: colores.azulProfundo,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: colores.azulProfundo
+                        },
+                        grid: {
+                            color: 'rgba(26, 54, 93, 0.1)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: colores.azulProfundo
+                        },
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        // Heatmap de Correlación: Nivel Educativo y Sistema de Costeo
+        const ctxHeatmap = document.getElementById('correlacionHeatmap').getContext('2d');
+        const heatmapData = {
+            labels: ['Educación Básica', 'Técnicos', 'Profesionales'],
+            datasets: [
+                {
+                    label: 'Registros Históricos',
+                    data: [5, 45, 70],
+                    backgroundColor: function(context) {
+                        const value = context.dataset.data[context.dataIndex];
+                        const alpha = value / 100;
+                        return `rgba(26, 54, 93, ${alpha})`;
+                    },
+                    borderColor: 'white',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Métodos Mixtos',
+                    data: [15, 40, 25],
+                    backgroundColor: function(context) {
+                        const value = context.dataset.data[context.dataIndex];
+                        const alpha = value / 100;
+                        return `rgba(42, 98, 143, ${alpha})`;
+                    },
+                    borderColor: 'white',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Sin Registros Formales',
+                    data: [80, 15, 5],
+                    backgroundColor: function(context) {
+                        const value = context.dataset.data[context.dataIndex];
+                        const alpha = value / 100;
+                        return `rgba(62, 146, 204, ${alpha})`;
+                    },
+                    borderColor: 'white',
+                    borderWidth: 1
+                }
+            ]
+        };
+
+        new Chart(ctxHeatmap, {
+            type: 'bar',
+            data: heatmapData,
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        stacked: true,
+                        title: {
+                            display: true,
+                            text: 'Porcentaje de adopción (%)',
+                            color: colores.azulProfundo
+                        },
+                        ticks: {
+                            color: colores.azulProfundo
+                        }
+                    },
+                    y: {
+                        stacked: true,
+                        ticks: {
+                            color: colores.azulProfundo
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            color: colores.azulProfundo
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.dataset.label}: ${context.raw}%`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Gráfico Radar para Comparación Multidimensional
+        const ctxRadar = document.getElementById('sistemaRadar').getContext('2d');
+        new Chart(ctxRadar, {
+            type: 'radar',
+            data: {
+                labels: [
+                    'Precisión',
+                    'Facilidad de uso',
+                    'Tiempo requerido',
+                    'Adaptabilidad',
+                    'Efectividad decisión',
+                    'Capacidad predictiva'
+                ],
+                datasets: [
+                    {
+                        label: 'Registros Históricos',
+                        data: [85, 40, 30, 60, 80, 90],
+                        backgroundColor: 'rgba(26, 54, 93, 0.2)',
+                        borderColor: colores.azulProfundo,
+                        pointBackgroundColor: colores.azulProfundo,
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: colores.azulProfundo
+                    },
+                    {
+                        label: 'Métodos Mixtos',
+                        data: [70, 65, 60, 85, 75, 65],
+                        backgroundColor: 'rgba(42, 98, 143, 0.2)',
+                        borderColor: colores.azulMedio,
+                        pointBackgroundColor: colores.azulMedio,
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: colores.azulMedio
+                    },
+                    {
+                        label: 'Sin Registros Formales',
+                        data: [30, 90, 85, 75, 50, 35],
+                        backgroundColor: 'rgba(62, 146, 204, 0.2)',
+                        borderColor: colores.azul,
+                        pointBackgroundColor: colores.azul,
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: colores.azul
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        angleLines: {
+                            color: 'rgba(26, 54, 93, 0.1)'
+                        },
+                        grid: {
+                            color: 'rgba(26, 54, 93, 0.1)'
+                        },
+                        pointLabels: {
+                            color: colores.azulProfundo,
+                            font: {
+                                size: 12
+                            }
+                        },
+                        ticks: {
+                            backdropColor: 'transparent',
+                            color: colores.azulProfundo
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: colores.azulProfundo
+                        }
+                    }
+                }
+            }
+        });
+
+        // Gráfico de Rentabilidad Percibida
+        const ctxRentabilidad = document.getElementById('rentabilidadBar').getContext('2d');
+        new Chart(ctxRentabilidad, {
+            type: 'bar',
+            data: {
+                labels: ['Registros\nHistóricos', 'Métodos\nMixtos', 'Sin Registros\nFormales'],
+                datasets: [{
+                    label: 'Puntaje promedio (1-10)',
+                    data: [8.4, 7.2, 5.6],
+                    backgroundColor: colores.azulMedio,
+                    borderColor: colores.azulProfundo,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 10,
+                        ticks: {
+                            color: colores.azulProfundo
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: colores.azulProfundo
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        // Gráfico de Precisión en Estimaciones
+        const ctxPrecision = document.getElementById('precisionBar').getContext('2d');
+        new Chart(ctxPrecision, {
+            type: 'bar',
+            data: {
+                labels: ['Registros\nHistóricos', 'Métodos\nMixtos', 'Sin Registros\nFormales'],
+                datasets: [{
+                    label: 'Precisión (%)',
+                    data: [85, 72, 45],
+                    backgroundColor: colores.azul,
+                    borderColor: colores.azulMedio,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            color: colores.azulProfundo,
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: colores.azulProfundo
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        // Gráfico de Adaptabilidad a Cambios
+        const ctxAdaptabilidad = document.getElementById('adaptabilidadBar').getContext('2d');
+        new Chart(ctxAdaptabilidad, {
+            type: 'bar',
+            data: {
+                labels: ['Registros\nHistóricos', 'Métodos\nMixtos', 'Sin Registros\nFormales'],
+                datasets: [{
+                    label: 'Adaptabilidad (1-10)',
+                    data: [6.2, 8.5, 7.9],
+                    backgroundColor: colores.azulClaro,
+                    borderColor: colores.azul,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 10,
+                        ticks: {
+                            color: colores.azulProfundo
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: colores.azulProfundo
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        // Gráfico de Tamaño del Negocio
+        const ctxTamanio = document.getElementById('tamanioBar').getContext('2d');
+        new Chart(ctxTamanio, {
+            type: 'bar',
+            data: {
+                labels: ['Micro', 'Pequeño', 'Mediano'],
+                datasets: [
+                    {
+                        label: 'Registros Históricos',
+                        data: [20, 53, 78],
+                        backgroundColor: colores.azulProfundo
+                    },
+                    {
+                        label: 'Métodos Mixtos',
+                        data: [30, 37, 20],
+                        backgroundColor: colores.azulMedio
+                    },
+                    {
+                        label: 'Sin Registros Formales',
+                        data: [50, 10, 2],
+                        backgroundColor: colores.azul
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            color: colores.azulProfundo,
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: colores.azulProfundo
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: colores.azulProfundo
+                        }
+                    }
+                }
+            }
+        });
+
+        // Gráfico de Antigüedad del Negocio
+        const ctxAntiguedad = document.getElementById('antiguedadBar').getContext('2d');
+        new Chart(ctxAntiguedad, {
+            type: 'bar',
+            data: {
+                labels: ['< 3 años', '3-8 años', '> 8 años'],
+                datasets: [
+                    {
+                        label: 'Registros Históricos',
+                        data: [15, 48, 68],
+                        backgroundColor: colores.azulProfundo
+                    },
+                    {
+                        label: 'Métodos Mixtos',
+                        data: [25, 42, 30],
+                        backgroundColor: colores.azulMedio
+                    },
+                    {
+                        label: 'Sin Registros Formales',
+                        data: [60, 10, 2],
+                        backgroundColor: colores.azul
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            color: colores.azulProfundo,
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: colores.azulProfundo
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: colores.azulProfundo
+                        }
+                    }
+                }
+            }
+        });
+
+        // Gráfico de Aplicaciones Prácticas
+        const ctxAplicaciones = document.getElementById('aplicacionesBar').getContext('2d');
+        new Chart(ctxAplicaciones, {
+            type: 'horizontalBar',
+            data: {
+                labels: [
+                    'Proyecciones financieras',
+                    'Evaluación de rentabilidad',
+                    'Identificación productos rentables',
+                    'Gestión de inventario',
+                    'Planificación temporadas'
+                ],
+                datasets: [
+                    {
+                        label: 'Registros Históricos',
+                        data: [86, 78, 70, 65, 72],
+                        backgroundColor: colores.azulProfundo
+                    },
+                    {
+                        label: 'Métodos Mixtos',
+                        data: [63, 68, 82, 75, 80],
+                        backgroundColor: colores.azulMedio
+                    },
+                    {
+                        label: 'Sin Registros Formales',
+                        data: [35, 42, 40, 50, 60],
+                        backgroundColor: colores.azul
+                    }
+                ]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            color: colores.azulProfundo,
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            color: colores.azulProfundo
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: colores.azulProfundo
+                        }
+                    }
+                }
+            }
+        });
+
+        // Fix para compatibilidad de Chart.js v3
+        Chart.defaults.horizontalBar = {
+            ...Chart.defaults.bar,
+            indexAxis: 'y'
+        };
+    </script>
+</body>
+</html>
+Subiendo página inicial de sistemas de costeo
